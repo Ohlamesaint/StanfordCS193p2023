@@ -11,6 +11,8 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
 
     private(set) var cards: [Card]
     
+    private var firstCard: Int? = nil
+    
     init (numberOfPairs: Int, cardFactory: (Int) -> CardContent) {
         cards = []
         for index in 0..<max(2, numberOfPairs) {
@@ -22,7 +24,26 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
     // card is implicitly a let
     mutating func choose(_ card: Card) {
         if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}){
-            cards[chosenIndex].isFaceUp.toggle()
+            
+            // card already face up
+            if(cards[chosenIndex].isFaceUp){
+                return
+            }
+            
+            cards[chosenIndex].isFaceUp = true
+            if let _ = firstCard {
+                if(cards[chosenIndex].content == cards[firstCard!].content) {
+                    cards[chosenIndex].isMatched = true
+                    cards[firstCard!].isMatched = true
+                } else {
+                    cards[chosenIndex].isFaceUp = false
+                    cards[firstCard!].isFaceUp = false
+                }
+                firstCard = nil
+            } else {
+                firstCard = chosenIndex
+            }
+            
         } else {
             print("card not found")
         }
@@ -42,7 +63,7 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
             lhs.id == rhs.id
         }
         
-        var isFaceUp = true
+        var isFaceUp = false
         var isMatched = false
         var content: CardContent
         var id: String

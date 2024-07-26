@@ -22,6 +22,7 @@ struct EmojiMemoryGameView: View {
             Text("Memorize!").font(.largeTitle)
             ScrollView{
                 cards
+                    .animation(/*@START_MENU_TOKEN@*/.easeIn/*@END_MENU_TOKEN@*/, value: viewModel.cards)
             }
             Spacer()
             HStack{
@@ -33,6 +34,7 @@ struct EmojiMemoryGameView: View {
                 animalsTheme
                 Spacer()
             }
+            Button(action: {viewModel.shuffle()}, label: {Text("shuffle")})
         }.padding()
         
     }
@@ -58,9 +60,14 @@ struct EmojiMemoryGameView: View {
 
     
     var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
-            ForEach(themes[currentTheme].indices.shuffled(), id: \.self) {
-                index in CardView(content: themes[currentTheme][index]).aspectRatio(2/3, contentMode: .fit)
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 65), spacing: 0.0)], spacing: 0.0) {
+            ForEach(viewModel.cards, id: \.self) {
+                card in CardView(card)
+                    .padding(4)
+                    .aspectRatio(2/3, contentMode: .fit)
+                    .onTapGesture {
+                        viewModel.choose(card)
+                    }
             }
         }.foregroundColor(.red)
 
@@ -68,8 +75,11 @@ struct EmojiMemoryGameView: View {
 }
 
 struct CardView: View {
-    @State var isFaceUp = false
-    let content: String;
+    let card: MemoryGameModel<String>.Card
+    
+    init(_ card: MemoryGameModel<String>.Card) {
+        self.card = card
+    }
     
     var body: some View {
         ZStack{
@@ -77,11 +87,12 @@ struct CardView: View {
             Group {
                 base.foregroundColor(.white)
                 base.strokeBorder(lineWidth: 2)
-                Text(content).font(.largeTitle)
-            }.opacity(isFaceUp ? 1 : 0)
-            base.fill().opacity(isFaceUp ? 0 : 1)
-        }.onTapGesture {
-            isFaceUp.toggle()
+                Text(card.content)
+                    .font(.system(size: 200))
+                    .minimumScaleFactor(0.01)
+                    .aspectRatio(1.0, contentMode: .fit)
+            }.opacity(card.isFaceUp ? 1 : 0)
+            base.fill().opacity(card.isFaceUp ? 0 : 1)
         }
     }
 }
