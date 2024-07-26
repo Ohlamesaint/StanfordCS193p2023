@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  EmojiMemoryGameView.swift
 //  Memorial
 //
 //  Created by SamLS Chen on 2024/7/23.
@@ -7,7 +7,10 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct EmojiMemoryGameView: View {
+    
+    @ObservedObject var viewModel: EmojiMemoryGame
+    
     let themes: Array<Array<String>> = [
         ["🛺", "⛴️", "🚀", "🏎️", "🛩️", "🚅", "🛵", "🚟", "🛺", "⛴️", "🚀", "🏎️", "🛩️", "🚅", "🛵", "🚟"],
         ["⛹️", "🏌🏻", "🚣🏻‍♀️", "🤺", "🏄🏻‍♀️", "🏋🏻", "🏊🏻‍♂️", "⛹️", "🏌🏻", "🚣🏻‍♀️", "🤺", "🏄🏻‍♀️", "🏋🏻", "🏊🏻‍♂️"],
@@ -84,5 +87,5 @@ struct CardView: View {
 }
 
 #Preview {
-    ContentView()
+    EmojiMemoryGameView(viewModel: EmojiMemoryGame())
 }
